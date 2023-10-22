@@ -1,0 +1,136 @@
+<div class="card">
+  <p-menubar [model]="items">
+      <ng-template pTemplate="start">
+          <img alt="LogoBot" src="../assets/Devilish_6238404.png" height="40" class="mr-2" />
+      </ng-template>
+  </p-menubar>
+</div>
+<div [ngSwitch]="sectionSelected">
+  <div *ngSwitchCase="'searches'">
+
+    <div class="m-2">
+      <h1>Libros</h1>
+        <div class="card">
+          <p-treeTable [value]="searchesTree" [columns]="colsSearches" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+              <ng-template pTemplate="caption"> Visualizador de búsquedas </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                  <tr>
+                      <th scope="col" *ngFor="let col of columns" [ttSortableColumn]="col.field">
+                          {{ col.header }}
+                          <p-treeTableSortIcon [field]="col.field"></p-treeTableSortIcon>
+                      </th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+                  <tr>
+                      <td *ngFor="let col of columns; let i = index">
+                        <div *ngIf="col.field !== 'actions' && col.field !== 'specialty';else elseBlock">
+                          {{ rowData[col.field] }}
+                        </div>
+                        <div *ngIf="col.field === 'specialty';">
+                          {{ getCarrera(rowData[col.field]) }}
+                        </div>
+                        <ng-template #elseBlock>
+                          <div *ngIf="col.field !== 'specialty';">
+                            <p-button icon="pi pi-check" styleClass="p-button-check" [style]="{ 'margin-right': '.5em' }" (onClick)="showDialogUpdateNew(rowData,'update')"></p-button>
+                          </div>
+                        </ng-template>
+                    </td>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="summary">
+                  <div [style]="{'text-align':'left'}">
+                    <p-button icon="pi pi-refresh" label="Refrescar" (onClick)="updateListOfSearches()"></p-button>
+                  </div>
+              </ng-template>
+          </p-treeTable>
+        </div>
+    </div>
+
+    <p-dialog  #dialogUpdateOrNew header="{{getTitle()}}" [(visible)]="visibleDialogNewUpdate" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '50vw' }" [draggable]="true" [resizable]="true">
+      <div class="flex flex-column gap-2">
+        <label htmlFor="titleProduct">Titulo</label>
+        <input title="titleProduct" pInputText id="titleProduct" [(ngModel)]="searchUpdateOrNew.title" />
+      </div>
+      <br>
+      <div class="flex flex-column gap-2">
+        <label htmlFor="productStringProduct">Palabra de Busqueda</label>
+        <input title="productStringProduct" pInputText id="productStringProduct" [(ngModel)]="searchUpdateOrNew.productString" />
+      </div>
+      <br>
+      <div class="serv">
+        <ul>
+          <li>
+            <label htmlFor="specialty">Carrera: </label>
+            <p-dropdown [options]="specialtyList" [(ngModel)]="searchUpdateOrNew.specialty" optionLabel="name"></p-dropdown>
+          </li>
+          <li>
+            <label htmlFor="frecuencyProduct">Frecuencia (Minutos): </label>
+        <p-inputNumber title="frecuencyProduct" id="frecuencyProduct" [(ngModel)]="searchUpdateOrNew.frequency" [min]="1"></p-inputNumber>
+          </li>
+          <li>
+              <label htmlFor="copyProduct">Copias solicitadas: </label>
+              <p-inputNumber [(ngModel)]="searchUpdateOrNew.copys"></p-inputNumber>
+          </li>
+        </ul>
+      </div>
+      <br>
+      <div class="flex flex-column gap-2">
+        <label htmlFor="activeProduct">¿Está activo?</label>
+        <p-inputSwitch [(ngModel)]="searchUpdateOrNew.active"></p-inputSwitch>
+      </div>
+      <br>
+      <p-button icon="pi pi-save" label="Guardar" class="mr-3" (click)="updateOrSaveSearch(updateOrNew);"></p-button>
+    </p-dialog>
+
+  </div>
+  <div *ngSwitchCase="'products'">
+    <div class="m-2">
+      <h1>Listas</h1>
+      <div class="card">
+        <p-treeTable #tt [value]="productsTree" [columns]="colsProducts" [filterMode]="filterMode" [tableStyle]="{'min-width':'50rem'}" [paginator]="true" [rows]="10" [scrollable]="true">
+            <ng-template pTemplate="caption"> Visualizador de productos </ng-template>
+            <ng-template pTemplate="caption">
+              <div class="flex justify-content-end align-items-center">
+                <p-selectButton [options]="filterModes" [(ngModel)]="filterMode" optionLabel="label" optionValue="value"></p-selectButton>
+                  <div class="p-input-icon-left">
+                      <i class="pi pi-search"></i>
+                      <input type="text" pInputText placeholder="Busqueda global" (input)="filterTableProducts($event)" />
+                  </div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th scope="col" *ngFor="let col of columns" [ttSortableColumn]="col.field">
+                        {{ col.header }}
+                        <p-treeTableSortIcon [field]="col.field"></p-treeTableSortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns; let i = index">
+                      <div *ngIf="col.field !== 'permalink' && col.field !== 'thumbnail'">
+                        {{ rowData[col.field] }}
+                      </div>
+                      <container-element [ngSwitch]="col.field">
+                        <div *ngSwitchCase="'permalink'"> <!-- link for go  ML -->
+                          <a title="{{ rowData[col.field] }}" rel="noopener" href="{{ rowData[col.field] }}" target="_blank">
+                            Link to ML
+                          </a>
+                        </div>
+                        <div *ngSwitchCase="'thumbnail'"> <!-- image preview -->
+                          <img alt="thumbnail" src="{{ rowData[col.field] }}" width="100" height="100">
+                        </div>
+                      </container-element>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-treeTable>
+      </div>
+    </div>
+  </div>
+  <div *ngSwitchDefault>
+    <h1>Page Not Found</h1>
+  </div>
+</div>

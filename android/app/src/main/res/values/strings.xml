@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">client-sales-r</string>
+    <string name="title_activity_main">client-sales-r</string>
+    <string name="package_name">com.bot.sales.r</string>
+    <string name="custom_url_scheme">com.bot.sales.r</string>
+</resources>
