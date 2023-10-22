@@ -47,41 +47,39 @@
         </div>
     </div>
 
-    <p-dialog  #dialogUpdateOrNew header="{{getTitle()}}" [(visible)]="visibleDialogNewUpdate" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '50vw' }" [draggable]="true" [resizable]="true">
-      <div class="flex flex-column gap-2">
-        <label htmlFor="titleProduct">Titulo</label>
-        <input title="titleProduct" pInputText id="titleProduct" [(ngModel)]="searchUpdateOrNew.title" />
-      </div>
-      <br>
-      <div class="flex flex-column gap-2">
-        <label htmlFor="productStringProduct">Palabra de Busqueda</label>
-        <input title="productStringProduct" pInputText id="productStringProduct" [(ngModel)]="searchUpdateOrNew.productString" />
-      </div>
-      <br>
-      <div class="serv">
-        <ul>
-          <li>
-            <label htmlFor="specialty">Carrera: </label>
-            <p-dropdown [options]="specialtyList" [(ngModel)]="searchUpdateOrNew.specialty" optionLabel="name"></p-dropdown>
-          </li>
-          <li>
-            <label htmlFor="frecuencyProduct">Frecuencia (Minutos): </label>
-        <p-inputNumber title="frecuencyProduct" id="frecuencyProduct" [(ngModel)]="searchUpdateOrNew.frequency" [min]="1"></p-inputNumber>
-          </li>
-          <li>
-              <label htmlFor="copyProduct">Copias solicitadas: </label>
-              <p-inputNumber [(ngModel)]="searchUpdateOrNew.copys"></p-inputNumber>
-          </li>
-        </ul>
-      </div>
-      <br>
-      <div class="flex flex-column gap-2">
-        <label htmlFor="activeProduct">¿Está activo?</label>
-        <p-inputSwitch [(ngModel)]="searchUpdateOrNew.active"></p-inputSwitch>
-      </div>
-      <br>
-      <p-button icon="pi pi-save" label="Guardar" class="mr-3" (click)="updateOrSaveSearch(updateOrNew);"></p-button>
-    </p-dialog>
+    <div #requestBook id="requestBook">
+      <p-dialog #dialogUpdateOrNew header="Solicitar entrega" [(visible)]="visibleDialogNewUpdate" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '50vw' }" [draggable]="true" [resizable]="true">
+        <div class="flex flex-column gap-2">
+          <label htmlFor="name">Nombre: </label>
+          <input title="name" pInputText id="name" [(ngModel)]="newReservation.nombre" />
+        </div>
+        <br>
+        <div class="flex flex-column gap-2">
+          <label htmlFor="email">Correo electronico: </label>
+          <input title="email" pInputText id="email" [(ngModel)]="newReservation.email" />
+        </div>
+        <br>
+        <div class="serv">
+          <ul>
+            <li>
+              <label htmlFor="specialty">Carrera: </label>
+              <p-dropdown [options]="specialtyList" [(ngModel)]="newReservation.carrer" optionLabel="name"></p-dropdown>
+            </li>
+            <li>
+              <label htmlFor="controlNumber">Numero de control: </label>
+              <input pInputText title="controlNumber" id="controlNumber" [(ngModel)]="newReservation.controlNumber" />
+            </li>
+            <li>
+              <label htmlFor="copyProduct">Numero de telefono: </label>
+              <p-inputNumber [(ngModel)]="newReservation.telephone" ></p-inputNumber>
+            </li>
+          </ul>
+        </div>
+        <br>
+        <p-button icon="pi pi-check-circle" label="Solicitar" class="mr-3" (click)="updateOrSaveReservation();"></p-button>
+      </p-dialog>
+    </div>
+
 
   </div>
   <div *ngSwitchCase="'products'">

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MercadoLibreService } from '../services/mercado-libre.service';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { TreeTable } from 'primeng/treetable';
@@ -6,6 +6,12 @@ import { Search } from '../models/search';
 import { Dialog } from 'primeng/dialog';
 import { Subscription, interval } from 'rxjs';
 import { Specialty } from '../models/specialty';
+import { Reservation } from '../models/reservation';
+import jsPDF from 'jspdf';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import * as htmlToPdfmake from 'html-to-pdfmake';
+(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-root',
@@ -16,6 +22,7 @@ export class AppComponent implements OnInit{
 
   source = interval(60000);
   subscription: Subscription = this.source.subscribe(() => this.updateListOfProducts());
+  @ViewChild('requestBook') requestBook: ElementRef | undefined;
 
 
   title = 'botSalesR';
@@ -31,17 +38,18 @@ export class AppComponent implements OnInit{
       { label: 'Estricto', value: 'strict' }
   ];
   visibleDialogNewUpdate = false;
-  searchUpdateOrNew: Search =
+
+  newReservation: Reservation =
   {
-    title: '',
+    nombre: '',
     slug: '',
-    productString: '',
-    frequency: 1,
-    active: true,
-    createdAt: '',
-    updatedAt: '',
-    copys: 1
+    slug_books: '',
+    email: '',
+    controlNumber: '',
+    carrer: 1,
+    telephone: undefined,
   };
+
   updateOrNew = 'update';
   specialtyList= [
     { name: 'Ingeniería Bioquímica', code: Specialty.Ingeniería_Bioquímica },
@@ -139,47 +147,20 @@ export class AppComponent implements OnInit{
     this.treetableProducts.filterGlobal(inputData.value, 'contains');
   }
 
-  deleteSearch(rowData: Search):void {
-    console.log(rowData);
-    this.mercadolibre.deleteSearch(rowData).subscribe(() => {
-      this.updateListOfSearches();
-      this.updateListOfProducts();
-    });
-  }
-
   showDialogUpdateNew(rowData: Search, mode:string):void{
     this.updateOrNew = mode;
     this.visibleDialogNewUpdate = true;
-    if (this.updateOrNew === 'update') {
-      this.searchUpdateOrNew = rowData;
-    } else {
-      this.searchUpdateOrNew =
-      {
-        title: '',
-        slug: '',
-        productString: '',
-        frequency: 1,
-        active: true,
-        createdAt: '',
-        updatedAt: ''
-      };
-    }
+
   }
 
-  updateOrSaveSearch(mode:string){
-    if (mode === 'update') {
-      this.searchUpdateOrNew.createdAt = new Date().toString();
-      this.searchUpdateOrNew.specialty = this.searchUpdateOrNew.specialty.code;
-      this.mercadolibre.updateSearch(this.searchUpdateOrNew).subscribe(()=>{
-        this.updateListOfSearches();
-      });
-    } else {
-      this.searchUpdateOrNew.slug = (Math.random() + 1).toString(36).substring(5);
-      this.searchUpdateOrNew.specialty = this.searchUpdateOrNew.specialty.code;
-      this.mercadolibre.createSearch(this.searchUpdateOrNew).subscribe(()=>{
-        this.updateListOfSearches();
-      });
-    }
+  updateOrSaveReservation(){
+    this.downloadAsPDF();
+    this.newReservation.slug = (Math.random() + 1).toString(36).substring(5);
+    this.newReservation.carrer = this.newReservation.carrer.code;
+    this.mercadolibre.createSearch(this.newReservation).subscribe(()=>{
+      this.updateListOfSearches();
+    });
+
     this.visibleDialogNewUpdate = false;
   }
 
@@ -187,11 +168,15 @@ export class AppComponent implements OnInit{
     return this.specialtyList?.find(({ code })=> code === codeCarrera)?.name;
   }
 
-  getTitle():string{
-    if (this.updateOrNew === 'update') {
-      return 'Update search';
-    } else {
-      return 'Create search';
-    }
+  public downloadAsPDF() {
+    const doc = new jsPDF();
+
+    const pdfTable = this.requestBook?.nativeElement;
+
+    const html = htmlToPdfmake(pdfTable.innerHTML);
+
+    const documentDefinition = { content: html };
+    pdfMake.createPdf(documentDefinition).open();
+
   }
 }
