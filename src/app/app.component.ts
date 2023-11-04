@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MercadoLibreService } from '../services/mercado-libre.service';
 import { MenuItem, TreeNode } from 'primeng/api';
-import { TreeTable } from 'primeng/treetable';
+import { Table } from 'primeng/table';
 import { Search } from '../models/search';
 import { Dialog } from 'primeng/dialog';
 import { Subscription, interval } from 'rxjs';
@@ -10,7 +10,7 @@ import { Reservation } from '../models/reservation';
 import jsPDF from 'jspdf';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import * as htmlToPdfmake from 'html-to-pdfmake';
+import htmlToPdfmake from 'html-to-pdfmake';
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -23,7 +23,7 @@ export class AppComponent implements OnInit{
   source = interval(60000);
   subscription: Subscription = this.source.subscribe(() => this.updateListOfProducts());
   @ViewChild('requestBook') requestBook: ElementRef | undefined;
-
+  selectedRowData: Search | undefined;
 
   title = 'botSalesR';
   sectionSelected = 'searches';
@@ -41,12 +41,12 @@ export class AppComponent implements OnInit{
 
   newReservation: Reservation =
   {
-    nombre: '',
+    name: '',
     slug: '',
-    slug_books: '',
+    productSlug: '',
     email: '',
     controlNumber: '',
-    carrer: 1,
+    specialty: 1,
     telephone: undefined,
   };
 
@@ -64,7 +64,7 @@ export class AppComponent implements OnInit{
   ];
 
 
-  @ViewChild('tt') treetableProducts!: TreeTable;
+  @ViewChild('tt') treetableProducts!: Table;
   @ViewChild(Dialog) dialogModalUpdateNew!: Dialog;
 
 
@@ -147,17 +147,19 @@ export class AppComponent implements OnInit{
     this.treetableProducts.filterGlobal(inputData.value, 'contains');
   }
 
-  showDialogUpdateNew(rowData: Search, mode:string):void{
+  showDialogUpdateNew(rowData: Search, mode:string):void {
     this.updateOrNew = mode;
     this.visibleDialogNewUpdate = true;
-
+    this.selectedRowData = rowData;
   }
 
   updateOrSaveReservation(){
-    this.downloadAsPDF();
+    // TODO: update the pfd save:
+    // this.downloadAsPDF();
     this.newReservation.slug = (Math.random() + 1).toString(36).substring(5);
-    this.newReservation.carrer = this.newReservation.carrer.code;
-    this.mercadolibre.createSearch(this.newReservation).subscribe(()=>{
+    this.newReservation.specialty = this.newReservation.specialty.code;
+    this.newReservation.productSlug = this.selectedRowData?.slug ? this.selectedRowData.slug: '';
+    this.mercadolibre.createReservation(this.newReservation).subscribe(()=>{
       this.updateListOfSearches();
     });
 

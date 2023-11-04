@@ -51,7 +51,7 @@
       <p-dialog #dialogUpdateOrNew header="Solicitar entrega" [(visible)]="visibleDialogNewUpdate" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '50vw' }" [draggable]="true" [resizable]="true">
         <div class="flex flex-column gap-2">
           <label htmlFor="name">Nombre: </label>
-          <input title="name" pInputText id="name" [(ngModel)]="newReservation.nombre" />
+          <input title="name" pInputText id="name" [(ngModel)]="newReservation.name" />
         </div>
         <br>
         <div class="flex flex-column gap-2">
@@ -59,21 +59,25 @@
           <input title="email" pInputText id="email" [(ngModel)]="newReservation.email" />
         </div>
         <br>
-        <div class="serv">
-          <ul>
-            <li>
+        <div class="flex">
+          <div class="flex-auto flex align-items-center font-bold text-white border-round">
+            <span class="p-float-label">
+              <p-dropdown [options]="specialtyList" [(ngModel)]="newReservation.specialty" optionLabel="name"></p-dropdown>
               <label htmlFor="specialty">Carrera: </label>
-              <p-dropdown [options]="specialtyList" [(ngModel)]="newReservation.carrer" optionLabel="name"></p-dropdown>
-            </li>
-            <li>
-              <label htmlFor="controlNumber">Numero de control: </label>
+            </span>
+          </div>
+          <div class="flex-auto flex align-items-center font-bold text-white border-round">
+            <span class="p-float-label">
               <input pInputText title="controlNumber" id="controlNumber" [(ngModel)]="newReservation.controlNumber" />
-            </li>
-            <li>
-              <label htmlFor="copyProduct">Numero de telefono: </label>
+              <label htmlFor="controlNumber">Numero de control: </label>
+            </span>
+          </div>
+          <div class="flex-auto flex align-items-center font-bold text-white border-round">
+            <span class="p-float-label">
               <p-inputNumber [(ngModel)]="newReservation.telephone" ></p-inputNumber>
-            </li>
-          </ul>
+              <label htmlFor="copyProduct">Numero de telefono: </label>
+            </span>
+          </div>
         </div>
         <br>
         <p-button icon="pi pi-check-circle" label="Solicitar" class="mr-3" (click)="updateOrSaveReservation();"></p-button>

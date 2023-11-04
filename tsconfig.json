@@ -30,6 +30,7 @@
     "strictInputAccessModifiers": true,
     "fullTemplateTypeCheck": true,
     "enableIvy": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   }
 }

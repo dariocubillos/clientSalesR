@@ -1,9 +1,9 @@
 export interface Reservation {
-  nombre: string;
+  name: string;
   slug: string;
-  slug_books: string;
+  productSlug: string;
   email: string;
   controlNumber: string;
-  carrer: any;
+  specialty: any;
   telephone?: number;
 }

@@ -8,7 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputSwitchModule } from 'primeng/inputswitch';
-
+import { TableModule } from 'primeng/table';
 import { TreeTableModule } from 'primeng/treetable';
 import { AnimateModule } from 'primeng/animate';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -33,6 +33,7 @@ import { DropdownModule } from 'primeng/dropdown';
     InputTextareaModule,
     InputNumberModule,
     TreeTableModule,
+    TableModule,
     AnimateModule,
     SelectButtonModule,
     FormsModule,

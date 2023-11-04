@@ -18,8 +18,8 @@ export class MercadoLibreService {
     return this.http.post<any>(`${environment.endPoint}/createSearch`, productQuery);
   }
 
-  createSearch(searchData: Reservation): Observable<Reservation>{
-    return this.http.post<any>(`${environment.endPoint}/createReservation`,searchData);
+  createReservation(searchData: Reservation): Observable<Reservation>{
+    return this.http.post<any>(`${environment.endPoint}/reservation`,searchData);
   }
 
   getSearches(): Observable<Search[]> {
