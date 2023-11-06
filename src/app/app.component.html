@@ -46,18 +46,19 @@
           </p-treeTable>
         </div>
     </div>
-
     <div #requestBook id="requestBook">
-      <p-dialog #dialogUpdateOrNew header="Solicitar entrega" [(visible)]="visibleDialogNewUpdate" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '50vw' }" [draggable]="true" [resizable]="true">
+      <p-dialog #dialogUpdateOrNew header="Solicitar entrega" [(visible)]="visibleDialogNewUpdate" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '40vw' }" [draggable]="true" [resizable]="true">
         <div class="flex flex-column gap-2">
           <label htmlFor="name">Nombre: </label>
           <input title="name" pInputText id="name" [(ngModel)]="newReservation.name" />
         </div>
         <br>
+        <br>
         <div class="flex flex-column gap-2">
           <label htmlFor="email">Correo electronico: </label>
           <input title="email" pInputText id="email" [(ngModel)]="newReservation.email" />
         </div>
+        <br>
         <br>
         <div class="flex">
           <div class="flex-auto flex align-items-center font-bold text-white border-round">
@@ -74,17 +75,21 @@
           </div>
           <div class="flex-auto flex align-items-center font-bold text-white border-round">
             <span class="p-float-label">
-              <p-inputNumber [(ngModel)]="newReservation.telephone" ></p-inputNumber>
+              <p-inputNumber [(ngModel)]="newReservation.telephone" [useGrouping]="false"></p-inputNumber>
               <label htmlFor="copyProduct">Numero de telefono: </label>
             </span>
           </div>
         </div>
         <br>
+        <br>
+        <div class="flex flex-column gap-2">
+          <label htmlFor="email">Importante: Entrega de forma pronta tu compromiso y asegurate de llevar tu comprobante que te daremos despues de que termines este formulario.</label>
+        </div>
+        <br>
+        <br>
         <p-button icon="pi pi-check-circle" label="Solicitar" class="mr-3" (click)="updateOrSaveReservation();"></p-button>
       </p-dialog>
     </div>
-
-
   </div>
   <div *ngSwitchCase="'products'">
     <div class="m-2">
