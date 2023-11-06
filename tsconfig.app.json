@@ -15,6 +15,5 @@
   "angularCompilerOptions": {
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-
   }
 }

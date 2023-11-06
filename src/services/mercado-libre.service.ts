@@ -30,4 +30,8 @@ export class MercadoLibreService {
     return this.http.get<any>(`${environment.endPoint}/products`);
   }
 
+  removeQtyOfSearch(reservation: Reservation ): Observable<Search> {
+    return this.http.patch<any>(`${environment.endPoint}/reservationminus/${reservation.productSlug}`, reservation);
+  }
+
 }

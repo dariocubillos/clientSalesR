@@ -4,13 +4,14 @@ import { MenuItem, TreeNode } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { Search } from '../models/search';
 import { Dialog } from 'primeng/dialog';
-import { Subscription, interval } from 'rxjs';
+import { Subscription, async, interval } from 'rxjs';
 import { Specialty } from '../models/specialty';
 import { Reservation } from '../models/reservation';
 import jsPDF from 'jspdf';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import htmlToPdfmake from 'html-to-pdfmake';
+import { formatDate } from '@angular/common';
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -129,7 +130,6 @@ export class AppComponent implements OnInit{
   updateListOfProducts():void {
     this.mercadolibre.getAllProducts().subscribe((products) => {
       this.productsTree = [];
-      console.log(products);
       products.forEach(product => {
         product.createdAt = this.fixDate(product.createdAt);
         product.updatedAt = this.fixDate(product.updatedAt);
@@ -153,16 +153,18 @@ export class AppComponent implements OnInit{
     this.selectedRowData = rowData;
   }
 
-  updateOrSaveReservation(){
+  async updateOrSaveReservation(){
     // TODO: update the pfd save:
-    // this.downloadAsPDF();
+    this.downloadAsPDF();
     this.newReservation.slug = (Math.random() + 1).toString(36).substring(5);
     this.newReservation.specialty = this.newReservation.specialty.code;
     this.newReservation.productSlug = this.selectedRowData?.slug ? this.selectedRowData.slug: '';
-    this.mercadolibre.createReservation(this.newReservation).subscribe(()=>{
+    await this.mercadolibre.removeQtyOfSearch(this.newReservation).subscribe(async (removed) =>{
+      console.log(removed);
+    });
+    await this.mercadolibre.createReservation(this.newReservation).subscribe(async ()=>{
       this.updateListOfSearches();
     });
-
     this.visibleDialogNewUpdate = false;
   }
 
@@ -172,13 +174,34 @@ export class AppComponent implements OnInit{
 
   public downloadAsPDF() {
     const doc = new jsPDF();
-
-    const pdfTable = this.requestBook?.nativeElement;
-
-    const html = htmlToPdfmake(pdfTable.innerHTML);
-
+    let dateNow = formatDate(new Date(), 'yyyy-MM-dd', 'en-US')
+    const template = `<!DOCTYPE html>
+    <html>
+      <title>
+          Solicitud de Entrega
+      </title>
+      <body style="margin: auto; width: 640px; padding: 50px;">
+          <h1 style="text-align: center;">Instituto Tecnológico Superior de Acayucan</h1>
+          <h2 style="text-align: center;">Compromiso de Entrega</h1>
+          <br>
+            <h6 style="padding-left:70%;">Fecha: ${dateNow}</h6>
+            <h6 style="padding-left:70%;">Lugar: Acayucan.Ver</h6>
+          <br>
+        <p tyle="text-align: justify">
+          A quien corresponda: <br>
+          El alumno ${this.newReservation.name}, con número de matrícula ${this.newReservation.controlNumber} de la carrera de ${this.newReservation.specialty.name}, se compromete formalmente a la entrega del siguiente libro:
+            <ul>
+                <li>${this.selectedRowData?.title}</li>
+            </ul>
+        </p>
+        <p>Sin más por el momento se le agradece su atención.</p>
+          <br>
+          <br>
+        <h4 style="text-align: center;">Firma: ${this.newReservation.name}</h4>
+      </body>
+    </html>`;
+    const html = htmlToPdfmake(template);
     const documentDefinition = { content: html };
     pdfMake.createPdf(documentDefinition).open();
-
   }
 }
